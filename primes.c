@@ -13,6 +13,13 @@ typedef struct PrimesArray
     uint64_t primes[];  // Elements
 } PrimesArray;
 
+// Position of a bit in an array of bytes
+typedef struct BitPos
+{
+    size_t byte;    // Index of the byte on the array
+    uint8_t bit;    // Index of the bit on the byte
+} BitPos;
+
 // Determine if a given positive integer is prime
 static bool is_prime(uint64_t value)
 {
@@ -40,6 +47,14 @@ static bool is_prime(uint64_t value)
     }
     
     return true;
+}
+
+static inline void offset_get(uint64_t value, uint64_t offset)
+{
+    const uint64_t index = value - offset;
+    const size_t byte = index / 8UL;
+    const uint8_t bit = index % 8UL;
+    return (BitPos){byte, bit};
 }
 
 static inline bool sieve_get(uint8_t *sieve, size_t byte, uint8_t bit)
@@ -71,18 +86,18 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
     // This is an array of bitmasks to flag if a number is not prime
     // Each bit represents a number, so a byte represent 8 numbers.
     // If a bit is set, then the corresponding number is not prime.
-    uint8_t *sieve = (uint8_t*)calloc(buffer_size, sizeof(uint8_t));
+    uint8_t *restrict sieve = (uint8_t*)calloc(buffer_size, sizeof(uint8_t));
+    
+    BitPos pos; // Position of the bit on the sieve
 
     // Iterate over all values in the range
     for (uint64_t value = start; value <= end; value++)
     {
         // Calculate the position of the value on the sieve
-        const uint64_t offset = value - start;
-        const size_t byte = offset / 8UL;
-        const uint8_t bit = offset % 8UL;
+        pos = offset_get(value, start);
 
         // Check if the current value was already flagged as not being prime
-        if (sieve_get(sieve, byte, bit)) continue;
+        if (sieve_get(sieve, pos.byte, pos.bit)) continue;
 
         // Check if the value is prime
         if (is_prime(value))
@@ -90,10 +105,8 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
             // If the value is prime, flag its multiples as not being prime
             for (uint64_t multiple = value * 2; multiple <= end; multiple += value)
             {
-                const uint64_t offset = multiple - start;
-                const size_t byte = offset / 8UL;
-                const uint8_t bit = offset % 8UL;
-                sieve_set(sieve, byte, bit);
+                pos = offset_get(multiple, start);
+                sieve_set(sieve, pos.byte, pos.bit);
             }
         }
     }
