@@ -16,6 +16,10 @@ typedef struct PrimesArray
 // Determine if a given positive integer is prime
 static bool is_prime(uint64_t value)
 {
+    // Special case: value up to 3
+    if (value == 0 || value == 1) return false;
+    if (value == 2 || value == 3) return true;
+    
     // Special cases:
     //  - Divisible by 2 or 3
     //  - Value can not be written in the form of 6n ± 1 (for n integer)
@@ -45,7 +49,7 @@ static inline bool sieve_get(uint8_t *sieve, size_t byte, uint8_t bit)
 
 static inline void sieve_set(uint8_t *sieve, size_t byte, uint8_t bit)
 {
-    sieve[byte] | (1 << bit);
+    sieve[byte] |= (1 << bit);
 }
 
 // Returns an array of prime numbers whithin a range
@@ -69,6 +73,7 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
     // If a bit is set, then the corresponding number is not prime.
     uint8_t *sieve = (uint8_t*)calloc(buffer_size, sizeof(uint8_t));
 
+    // Iterate over all values in the range
     for (uint64_t value = start; value <= end; value++)
     {
         // Calculate the position of the value on the sieve
