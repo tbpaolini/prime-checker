@@ -83,14 +83,19 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
 
     // Calculate the buffer size for storing which numbers in the range are prime
     const uint64_t range_len = end - start;
-    size_t buffer_size = range_len / 8UL;
-    if (range_len % 8 != 0) buffer_size += 1UL;
+    size_t buffer_size = (range_len / 8UL) + 1UL;
 
     // Sieve of Erastothenes
     // This is an array of bitmasks to flag if a number is not prime
     // Each bit represents a number, so a byte represent 8 numbers.
     // If a bit is set, then the corresponding number is not prime.
     uint8_t *restrict sieve = (uint8_t*)calloc(buffer_size, sizeof(uint8_t));
+
+    if (!sieve)
+    {
+        fprintf(stderr, "Error: No enough memory\n");
+        abort();
+    }
     
     BitPos pos; // Position of the bit on the sieve
     uint64_t prime_count = 0;   // Count how many numbers are prime
@@ -131,6 +136,13 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
 
     // Alocate array to store the prime numbers in the range
     PrimesArray *output = (PrimesArray*)malloc( sizeof(PrimesArray) + (prime_count * sizeof(uint64_t)) );
+
+    if (!output)
+    {
+        fprintf(stderr, "Error: No enough memory\n");
+        abort();
+    }
+
     output->length = prime_count;
     size_t prime_id = 0;
 
