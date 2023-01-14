@@ -150,28 +150,26 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
     return output;
 }
 
-static bool validate_input(char *input)
+// Check if a string only contains digits
+static void validate_input(char *input)
 {
     const size_t length = strlen(input);
     for (size_t i = 0; i < length; i++)
     {
-        if (!isdigit(input[i]) && input[i] != ' ') return false;
+        if (!isdigit(input[i]))
+        {
+            fprintf(stderr, "Error: %s is not a positive integer or zero\n", input);
+            abort();
+        }
     }
-    return true;
 }
 
 int main(int argc, char **argv)
 {
-    primes_range(1, 200);
     switch (argc)
     {
         case 2:
-            if (!validate_input(argv[1]))
-            {
-                fprintf(stderr, "Error: %s is not a positive integer\n", argv[1]);
-                break;
-            }
-
+            validate_input(argv[1]);
             const uint64_t value = atol(argv[1]);
             
             if (is_prime(value))
