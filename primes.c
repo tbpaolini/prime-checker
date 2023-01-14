@@ -49,7 +49,8 @@ static bool is_prime(uint64_t value)
     return true;
 }
 
-static inline void offset_get(uint64_t value, uint64_t offset)
+// Get the position of a bit in an array of bytes
+static inline BitPos bit_get_pos(uint64_t value, uint64_t offset)
 {
     const uint64_t index = value - offset;
     const size_t byte = index / 8UL;
@@ -57,11 +58,13 @@ static inline void offset_get(uint64_t value, uint64_t offset)
     return (BitPos){byte, bit};
 }
 
+// Get whether a flag on the Sieve of Erastothenes is set
 static inline bool sieve_get(uint8_t *sieve, size_t byte, uint8_t bit)
 {
     return sieve[byte] & (1 << bit);
 }
 
+// Set a flag on the Sieve of Erastothenes
 static inline void sieve_set(uint8_t *sieve, size_t byte, uint8_t bit)
 {
     sieve[byte] |= (1 << bit);
@@ -78,6 +81,7 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
         start ^= end;
     }
 
+    // Calculate the buffer size for storing which numbers in the range are prime
     const uint64_t range_len = end - start;
     size_t buffer_size = range_len / 8UL;
     if (range_len % 8 != 0) buffer_size += 1UL;
@@ -89,12 +93,13 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
     uint8_t *restrict sieve = (uint8_t*)calloc(buffer_size, sizeof(uint8_t));
     
     BitPos pos; // Position of the bit on the sieve
+    uint64_t prime_count = range_len;   // Count how many numbers are prime
 
     // Iterate over all values in the range
     for (uint64_t value = start; value <= end; value++)
     {
         // Calculate the position of the value on the sieve
-        pos = offset_get(value, start);
+        pos = bit_get_pos(value, start);
 
         // Check if the current value was already flagged as not being prime
         if (sieve_get(sieve, pos.byte, pos.bit)) continue;
@@ -105,11 +110,30 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
             // If the value is prime, flag its multiples as not being prime
             for (uint64_t multiple = value * 2; multiple <= end; multiple += value)
             {
-                pos = offset_get(multiple, start);
+                pos = bit_get_pos(multiple, start);
                 sieve_set(sieve, pos.byte, pos.bit);
+                prime_count--;
             }
         }
     }
+
+    // Alocate array to store the prime numbers in the range
+    PrimesArray *output = (PrimesArray*)malloc( sizeof(PrimesArray) + (prime_count * sizeof(uint64_t)) );
+    output->length = prime_count;
+    size_t prime_id = 0;
+
+    // Populate the array
+    for (uint64_t value = start; value <= end; value++)
+    {
+        pos = bit_get_pos(value, start);
+        if (!sieve_get(sieve, pos.byte, pos.bit))
+        {
+            output->primes[prime_id] = value;
+        }
+    }
+
+    // Return a pointer to the array
+    return output;
 }
 
 static bool validate_input(char *input)
@@ -124,6 +148,7 @@ static bool validate_input(char *input)
 
 int main(int argc, char **argv)
 {
+    primes_range(1, 200);
     switch (argc)
     {
         case 2:
