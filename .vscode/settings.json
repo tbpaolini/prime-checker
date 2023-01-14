@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/tiago/proj/primes",
+            "binaryPath": "/home/tiago/proj/primes/primes",
+            "binaryArgs": []
+        }
+    ]
+}
