@@ -184,6 +184,21 @@ int main(int argc, char **argv)
             break;
         
         case 3:
+            validate_input(argv[1]);
+            validate_input(argv[2]);
+
+            const uint64_t start = atol(argv[1]);
+            const uint64_t end = atol(argv[2]);
+            PrimesArray *output = primes_range(start, end);
+
+            for (size_t i = 0; i < output->length; i++)
+            {
+                printf("%lu ", output->primes[i]);
+            }
+            printf("\n");
+
             break;
     }
+
+    return 0;
 }
