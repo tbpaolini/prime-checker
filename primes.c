@@ -58,13 +58,13 @@ static inline BitPos bit_get_pos(uint64_t value, uint64_t offset)
     return (BitPos){byte, bit};
 }
 
-// Get whether a flag on the Sieve of Erastothenes is set
+// Get whether a flag on the Sieve of Eratosthenes is set
 static inline bool sieve_get(uint8_t *sieve, size_t byte, uint8_t bit)
 {
     return sieve[byte] & (1 << bit);
 }
 
-// Set a flag on the Sieve of Erastothenes
+// Set a flag on the Sieve of Eratosthenes
 static inline void sieve_set(uint8_t *sieve, size_t byte, uint8_t bit)
 {
     sieve[byte] |= (1 << bit);
@@ -85,7 +85,7 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
     const uint64_t range_len = end - start;
     size_t buffer_size = (range_len / 8UL) + 1UL;
 
-    // Sieve of Erastothenes
+    // Sieve of Eratosthenes
     // This is an array of bitmasks to flag if a number is not prime
     // Each bit represents a number, so a byte represent 8 numbers.
     // If a bit is set, then the corresponding number is not prime.
