@@ -42,14 +42,12 @@ static bool validate_input(char *input)
 
 int main(int argc, char **argv)
 {
-    bool test = is_prime(982451653);
-    
     switch (argc)
     {
         case 2:
             if (!validate_input(argv[1]))
             {
-                fprintf(stderr, "Error: %s is not an integer\n", argv[1]);
+                fprintf(stderr, "Error: %s is not a positive integer\n", argv[1]);
                 break;
             }
 
