@@ -93,7 +93,7 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
     uint8_t *restrict sieve = (uint8_t*)calloc(buffer_size, sizeof(uint8_t));
     
     BitPos pos; // Position of the bit on the sieve
-    uint64_t prime_count = range_len;   // Count how many numbers are prime
+    uint64_t prime_count = 0;   // Count how many numbers are prime
 
     // Iterate over all values in the range
     for (uint64_t value = start; value <= end; value++)
@@ -107,13 +107,25 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
         // Check if the value is prime
         if (is_prime(value))
         {
-            // If the value is prime, flag its multiples as not being prime
-            for (uint64_t multiple = value * 2; multiple <= end; multiple += value)
-            {
-                pos = bit_get_pos(multiple, start);
-                sieve_set(sieve, pos.byte, pos.bit);
-                prime_count--;
-            }
+            // Increment the prime counter
+            prime_count++;          
+        }
+        else
+        {
+            // Flag the value as not being prime
+            pos = bit_get_pos(value, start);
+            sieve_set(sieve, pos.byte, pos.bit);
+        }
+
+        // Special case: value is 0 or 1
+        if (value <= 1) continue;
+
+        // Flag the value's multiples as not being prime
+        // (except if the value is 0 or 1)
+        for (uint64_t multiple = value * 2; multiple <= end; multiple += value)
+        {
+            pos = bit_get_pos(multiple, start);
+            sieve_set(sieve, pos.byte, pos.bit);
         }
     }
 
@@ -128,9 +140,11 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
         pos = bit_get_pos(value, start);
         if (!sieve_get(sieve, pos.byte, pos.bit))
         {
-            output->primes[prime_id] = value;
+            output->primes[prime_id++] = value;
         }
     }
+
+    free(sieve);
 
     // Return a pointer to the array
     return output;
