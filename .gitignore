@@ -1,0 +1,7 @@
+# Exclude files without extensions
+*
+!*.*
+
+# Exclude files the with executable's extensions
+*.out
+*.exe
