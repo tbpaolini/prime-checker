@@ -144,6 +144,7 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
         }
     }
 
+    // The sieve is no longer needed
     free(sieve);
 
     // Return a pointer to the array
@@ -158,8 +159,8 @@ static void validate_input(char *input)
     {
         if (!isdigit(input[i]))
         {
-            fprintf(stderr, "Error: %s is not a positive integer or zero\n", input);
-            abort();
+            fprintf(stderr, "Error: '%s' is not a positive integer or zero\n", input);
+            exit(EXIT_FAILURE);
         }
     }
 }
@@ -168,10 +169,13 @@ int main(int argc, char **argv)
 {
     switch (argc)
     {
+        // If the program got only one argument, check if the argument is prime
         case 2:
+            // Check if the argument is valid and convert it to integer
             validate_input(argv[1]);
             const uint64_t value = atol(argv[1]);
             
+            // Check if the value is prime
             if (is_prime(value))
             {
                 printf("Is prime\n");
@@ -183,19 +187,27 @@ int main(int argc, char **argv)
             
             break;
         
+        // If the program got two arguments, print the primes in the range between the arguments
         case 3:
+            // Check if both arguments are positive integers or zero
             validate_input(argv[1]);
             validate_input(argv[2]);
 
+            // Convert the range to integers
             const uint64_t start = atol(argv[1]);
             const uint64_t end = atol(argv[2]);
-            PrimesArray *output = primes_range(start, end);
 
+            // Get the primes in the range
+            PrimesArray *restrict output = primes_range(start, end);
+
+            // Print the primes
             for (size_t i = 0; i < output->length; i++)
             {
                 printf("%lu ", output->primes[i]);
             }
             printf("\n");
+
+            free(output);
 
             break;
     }
