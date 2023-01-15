@@ -18,6 +18,11 @@ If the program gets two arguments, then it prints all primes between the two val
 
 For compiling the program, just run `make` in the root directory of the project. If you are on Windows using MinGW, you might need to run `mingw32-make` instead.
 
+Or you can just download the compiled binaries:
+
+* [Executable for Windows](https://github.com/tbpaolini/prime-checker/releases/download/v1.0.0/primes.exe)
+* [Executable for Linux](https://github.com/tbpaolini/prime-checker/releases/download/v1.0.0/primes)
+
 ## Algorithm
 
 In order to check if a number is prime, I tool advantage of the following properties
