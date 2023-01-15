@@ -222,6 +222,16 @@ int main(int argc, char **argv)
             free(output);
 
             break;
+        
+        default:
+            printf(
+                "Usage:\n"
+                "\tPass a single argument for checking if a value is prime, or two arguments for getting all primes in a range.\n\n"
+                "Examples:\n"
+                "\t./primes 1000003\n"
+                "\t./primes 2000000 2001000\n"
+            );
+            break;
     }
 
     return 0;
