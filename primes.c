@@ -167,6 +167,8 @@ static PrimesArray *primes_range(uint64_t start, uint64_t end)
 static void validate_input(char *input)
 {
     const size_t length = strlen(input);
+
+    // If it contains a non-digit character
     for (size_t i = 0; i < length; i++)
     {
         if (!isdigit(input[i]))
@@ -174,6 +176,14 @@ static void validate_input(char *input)
             fprintf(stderr, "Error: '%s' is not a positive integer or zero\n", input);
             exit(EXIT_FAILURE);
         }
+    }
+    
+    // If beyond the maximum prime that fits in a 64-bit unsigned integer
+    if ( length > 20 || (length == 20 && strcmp(input, "18446744073709551615") == 1) )
+    {
+        fprintf(stderr, "Error: '%s' is above the maximum value of 18446744073709551615\n", input);
+        UINT64_MAX;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -185,7 +195,7 @@ int main(int argc, char **argv)
         case 2:
             // Check if the argument is valid and convert it to integer
             validate_input(argv[1]);
-            const uint64_t value = atol(argv[1]);
+            const uint64_t value = strtoull(argv[1], NULL, 10);
             
             // Check if the value is prime
             if (is_prime(value))
@@ -206,8 +216,8 @@ int main(int argc, char **argv)
             validate_input(argv[2]);
 
             // Convert the range to integers
-            const uint64_t start = atol(argv[1]);
-            const uint64_t end = atol(argv[2]);
+            const uint64_t start = strtoull(argv[1], NULL, 10);
+            const uint64_t end = strtoull(argv[2], NULL, 10);
 
             // Get the primes in the range
             PrimesArray *restrict output = primes_range(start, end);
