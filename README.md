@@ -20,8 +20,8 @@ For compiling the program, just run `make` in the root directory of the project.
 
 Or you can just download the compiled binaries:
 
-* [Executable for Windows](https://github.com/tbpaolini/prime-checker/releases/download/v1.0.0/primes.exe)
-* [Executable for Linux](https://github.com/tbpaolini/prime-checker/releases/download/v1.0.0/primes)
+* [Executable for Windows](https://github.com/tbpaolini/prime-checker/releases/download/v1.0.1/primes.exe)
+* [Executable for Linux](https://github.com/tbpaolini/prime-checker/releases/download/v1.0.1/primes)
 
 ## Algorithm
 
